@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #messages {
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: left;
+    }
+    .message {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat App</h1>
+  <div>
+    <input type="text" id="sender" placeholder="Sender">
+    <input type="text" id="message" placeholder="Message">
+    <button onclick="postMessage()">Send</button>
+  </div>
+  <div id="messages"></div>
+
+  <script>
+    const API_BASE_URL = 'http://127.0.0.1:4943/api/v2/canister/avqkn-guaaa-aaaaa-qaaea-cai/call';
+
+    async function fetchMessages() {
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.innerHTML = '';
+
+      const response = await fetch(`${API_BASE_URL}/getMessages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "args": [] })  // Make sure args are included
+      });
+
+      const data = await response.json();
+      const messages = data.Ok || data;
+
+      messages.forEach(message => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.innerHTML = `<strong>${message.sender}</strong>: ${message.content}`;
+        messagesDiv.appendChild(messageDiv);
+      });
+    }
+
+    async function postMessage() {
+      const sender = document.getElementById('sender').value;
+      const content = document.getElementById('message').value;
+
+      await fetch(`${API_BASE_URL}/postMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "args": [sender, content] })  // Correctly format args
+      });
+
+      document.getElementById('sender').value = '';
+      document.getElementById('message').value = '';
+      fetchMessages();
+    }
+
+    fetchMessages();
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "canisters": {
+    "chat_app": {
+      "main": "src/chat_app_backend/main.mo",
+      "type": "motoko"
+    },
+    "chat_app_frontend": {
+      "dependencies": [
+        "chat_app"
+      ],
+      "source": [
+        "src/chat_app_frontend/dist"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "version": 1
+}
